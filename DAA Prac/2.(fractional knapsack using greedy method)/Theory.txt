@@ -1,0 +1,49 @@
+The **Fractional Knapsack Problem** is an optimization problem where the goal is to maximize the total value of items placed in a knapsack, given a set of items with specific weights and values, while the knapsack has a weight capacity limit. Unlike the **0/1 Knapsack Problem**, where you can either take an item or leave it, in the **Fractional Knapsack Problem**, you are allowed to take fractional parts of the items.
+
+### 1. **Problem Definition**:
+   - You are given a set of items, each with a **weight** and a **value**.
+   - You are also given a **knapsack** with a maximum weight capacity.
+   - The objective is to **maximize the total value** in the knapsack while staying within the weight limit.
+
+### 2. **Greedy Approach**:
+   The **Greedy Method** is used to solve the Fractional Knapsack Problem by selecting the most valuable items per unit weight (i.e., the **value-to-weight ratio**) first. Here are the steps involved:
+
+   1. **Calculate the Value-to-Weight Ratio**: For each item, calculate the ratio of its value to its weight:
+      \[
+      \text{Value-to-weight ratio} = \frac{\text{Value}}{\text{Weight}}
+      \]
+      This ratio tells us how much value we get for each unit of weight.
+
+   2. **Sort the Items**: Sort the items in **descending order** of their value-to-weight ratio. The higher the ratio, the more valuable the item is in terms of its weight.
+
+   3. **Fill the Knapsack**:
+      - Start adding items to the knapsack, beginning with the item having the highest value-to-weight ratio.
+      - If the knapsack has enough capacity to accommodate the entire item, take it whole.
+      - If the knapsack does not have enough capacity for the entire item, take the fractional part of the item that fits into the remaining capacity of the knapsack.
+      - Continue this process until either all items are considered or the knapsack reaches its maximum capacity.
+
+### 3. **Key Concepts**:
+   - **Greedy Choice**: At each step, select the item (or part of it) that provides the highest value for the remaining weight capacity of the knapsack. This ensures that the solution is locally optimal, and in this case, it also turns out to be globally optimal.
+   - **Fractional Selection**: Unlike the 0/1 Knapsack Problem, where you can only select the whole item, in the fractional version, you can select a fraction of an item if necessary.
+   - **Optimal Substructure**: The problem exhibits optimal substructure because the optimal solution for the full knapsack is composed of optimal solutions for smaller subproblems (the smaller remaining knapsack capacities).
+
+### 4. **Time Complexity**:
+   - The most time-consuming operation in the greedy approach is sorting the items based on their value-to-weight ratio. The sorting step takes \(O(n \log n)\), where \(n\) is the number of items.
+   - After sorting, we simply iterate through the items once, which takes \(O(n)\).
+   - Therefore, the overall time complexity of the Fractional Knapsack using the greedy method is **O(n \log n)**.
+
+### 5. **Advantages**:
+   - The greedy approach works efficiently and provides an optimal solution for the Fractional Knapsack Problem.
+   - It is easy to implement and understand, making it suitable for practical scenarios where fractional items are allowed.
+
+### 6. **Limitations**:
+   - The greedy approach does not work for the **0/1 Knapsack Problem**, where fractional selection is not allowed. In that case, dynamic programming or other methods are more suitable.
+
+### 7. **Applications**:
+   - The Fractional Knapsack Problem has real-world applications in areas where items can be divided, such as:
+     - **Cargo loading**: When shipping goods, you may not always be able to fit an entire item, but can take a fraction of it.
+     - **Investment decisions**: In scenarios like investment portfolios, where you can invest a fraction of your funds in various assets based on their return-to-risk ratios.
+     - **Resource allocation**: Allocating limited resources (like time or budget) across multiple projects based on their return per unit of resource.
+
+### 8. **Conclusion**:
+   The **Fractional Knapsack Problem** is efficiently solved using the greedy method by maximizing the total value in the knapsack with a focus on the value-to-weight ratio. By selecting items in this way, we ensure that the knapsack is filled optimally, both in terms of value and weight, while allowing for fractional selections.

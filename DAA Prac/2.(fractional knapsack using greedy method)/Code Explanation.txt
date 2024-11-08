@@ -1,0 +1,126 @@
+Let's go through the code step by step to explain its functionality in detail.
+
+### **1. `fractional_knapsack(value, weight, capacity)`**
+
+```python
+def fractional_knapsack(value, weight, capacity):
+    items = sorted(zip(value, weight), key=lambda x: x[0] / x[1], reverse=True)
+    total_value = 0
+
+    for v, w in items:
+        if capacity >= w:
+            total_value += v
+            capacity -= w
+        else:
+            total_value += v * (capacity / w)
+            break
+
+    return total_value
+```
+
+- **Line 1**: Defines the function `fractional_knapsack(value, weight, capacity)` to solve the fractional knapsack problem. 
+  - The inputs are:
+    - `value`: List of values of items.
+    - `weight`: List of weights of items.
+    - `capacity`: The total weight capacity of the knapsack.
+  
+- **Line 2**: `items = sorted(zip(value, weight), key=lambda x: x[0] / x[1], reverse=True)`:
+  - This line combines the `value` and `weight` lists into a list of tuples using `zip(value, weight)`. Each tuple contains the value and weight of an item.
+  - The `sorted()` function is used to sort the items based on their **value-to-weight ratio** (i.e., `x[0] / x[1]`), in descending order (`reverse=True`).
+  - The lambda function `lambda x: x[0] / x[1]` is used to calculate the value-to-weight ratio for each item.
+  
+- **Line 3**: `total_value = 0`:
+  - Initializes a variable `total_value` to keep track of the total value that can be carried in the knapsack.
+  
+- **Line 4-7**: A for loop iterates over each item in `items` (which is a sorted list of value and weight tuples).
+  - **Line 5-6**: `if capacity >= w:`
+    - If the current item’s weight (`w`) is less than or equal to the remaining capacity (`capacity`) of the knapsack, the whole item is added to the knapsack. The value `v` is added to `total_value`, and the knapsack capacity is reduced by the weight of the item (`capacity -= w`).
+    
+  - **Line 7**: `else:`
+    - If the current item’s weight is greater than the remaining capacity, only a fraction of the item is added to the knapsack. The fraction of the item’s value added is proportional to the fraction of the remaining capacity, calculated as `v * (capacity / w)`. The loop then breaks because the knapsack is full.
+
+- **Line 8**: `return total_value`:
+  - After processing all the items (or filling the knapsack), the function returns the total value that can be carried in the knapsack.
+
+### **2. `get_input()`**
+
+```python
+def get_input():
+    value = list(map(int, input("Enter the values (comma-separated): ").split(',')))
+    weight = list(map(int, input("Enter the weights (comma-separated): ").split(',')))
+    capacity = int(input("Enter the capacity of the knapsack: "))
+
+    return value, weight, capacity
+```
+
+- **Line 1**: Defines the `get_input()` function, which prompts the user for input and returns the values, weights, and capacity for the knapsack problem.
+  
+- **Line 2**: `value = list(map(int, input("Enter the values (comma-separated): ").split(',')))`:
+  - This line prompts the user to input the values of the items as a comma-separated string.
+  - `input()` takes the user input as a string.
+  - `.split(',')` splits the input string into a list of substrings using the comma as the separator.
+  - `map(int, ...)` converts each substring into an integer.
+  - `list()` converts the map object into a list.
+  
+- **Line 3**: `weight = list(map(int, input("Enter the weights (comma-separated): ").split(',')))`:
+  - Similar to the `value` list, this line prompts the user to enter the weights of the items and processes them into a list of integers.
+  
+- **Line 4**: `capacity = int(input("Enter the capacity of the knapsack: "))`:
+  - This line prompts the user to input the knapsack's capacity and converts the input into an integer.
+  
+- **Line 5**: `return value, weight, capacity`:
+  - The function returns the `value` list, the `weight` list, and the `capacity` value.
+
+### **3. Main Program Execution**
+
+```python
+if __name__ == "__main__":
+    value, weight, capacity = get_input()
+    result = fractional_knapsack(value, weight, capacity)
+    print(f"Maximum value in knapsack: {result}")
+```
+
+- **Line 1**: `if __name__ == "__main__":`:
+  - This condition ensures that the following block of code runs only when the script is executed directly (not imported as a module).
+  
+- **Line 2**: `value, weight, capacity = get_input()`:
+  - Calls the `get_input()` function to get the values, weights, and knapsack capacity from the user.
+  
+- **Line 3**: `result = fractional_knapsack(value, weight, capacity)`:
+  - Calls the `fractional_knapsack()` function with the user-provided values, weights, and capacity to calculate the maximum value the knapsack can carry.
+  
+- **Line 4**: `print(f"Maximum value in knapsack: {result}")`:
+  - Prints the result returned by the `fractional_knapsack()` function, which is the maximum value that can be accommodated in the knapsack.
+
+### **Example Execution:**
+
+If you input the following:
+- Values: `60, 100, 120`
+- Weights: `10, 20, 30`
+- Knapsack Capacity: `50`
+
+The output would be:
+
+```
+Enter the values (comma-separated): 60,100,120
+Enter the weights (comma-separated): 10,20,30
+Enter the capacity of the knapsack: 50
+Maximum value in knapsack: 240.0
+```
+
+### **Explanation of Example:**
+
+- The value-to-weight ratios for the items are:
+  - Item 1: 60 / 10 = 6.0
+  - Item 2: 100 / 20 = 5.0
+  - Item 3: 120 / 30 = 4.0
+
+- The items are sorted in descending order by their value-to-weight ratio:
+  - Item 1, Item 2, Item 3.
+
+- The knapsack capacity is 50:
+  - Add Item 1 fully (weight 10, value 60, remaining capacity 40).
+  - Add Item 2 fully (weight 20, value 100, remaining capacity 20).
+  - Add Item 3 partially (weight 20 remaining, value 120, so we take a fraction, 20 / 30 * 120 = 80).
+
+- The total value = 60 + 100 + 80 = 240.

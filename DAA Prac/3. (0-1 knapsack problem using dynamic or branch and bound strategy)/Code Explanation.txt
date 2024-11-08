@@ -1,0 +1,130 @@
+The provided code implements the **0/1 Knapsack problem** using **Dynamic Programming (DP)**. Let's break down the functionality of the code step by step.
+
+### **1. `knapsack_dp(value, weight, capacity)`**
+
+```python
+def knapsack_dp(value, weight, capacity):
+    n = len(value)
+    dp = [[0 for _ in range(capacity + 1)] for _ in range(n + 1)]
+
+    for i in range(1, n + 1):
+        for w in range(1, capacity + 1):
+            if weight[i - 1] <= w:
+                dp[i][w] = max(dp[i - 1][w], dp[i - 1][w - weight[i - 1]] + value[i - 1])
+            else:
+                dp[i][w] = dp[i - 1][w]
+
+    return dp[n][capacity]
+```
+
+- **Line 1**: `def knapsack_dp(value, weight, capacity):`
+  - This defines the function `knapsack_dp` that accepts three parameters:
+    - `value`: A list of the values of the items.
+    - `weight`: A list of the corresponding weights of the items.
+    - `capacity`: The maximum weight capacity of the knapsack.
+  
+- **Line 2**: `n = len(value)`
+  - The variable `n` stores the total number of items (`value` list length).
+
+- **Line 3**: `dp = [[0 for _ in range(capacity + 1)] for _ in range(n + 1)]`
+  - Creates a 2D list `dp` (dynamic programming table) with dimensions `(n + 1) x (capacity + 1)`. All the entries are initially set to `0`.
+  - `dp[i][w]` will store the maximum value that can be obtained with the first `i` items and a knapsack capacity of `w`.
+
+- **Lines 5-9**: Iterating over each item and knapsack capacity:
+  - **Line 5**: `for i in range(1, n + 1):`
+    - Iterates through the items (from the first item to the nth item).
+  
+  - **Line 6**: `for w in range(1, capacity + 1):`
+    - Iterates through all possible capacities (from 1 to the full capacity of the knapsack).
+  
+  - **Line 7-8**: `if weight[i - 1] <= w:`
+    - If the current item can fit into the knapsack (i.e., its weight is less than or equal to the current capacity `w`), we calculate the maximum value between:
+      - Not including the current item: `dp[i - 1][w]`
+      - Including the current item: `dp[i - 1][w - weight[i - 1]] + value[i - 1]`
+    - **Line 8**: `dp[i][w] = max(dp[i - 1][w], dp[i - 1][w - weight[i - 1]] + value[i - 1])`
+      - This line stores the maximum of the two values calculated above in `dp[i][w]`.
+  
+  - **Line 9**: `else:`
+    - If the current item cannot be included (i.e., its weight exceeds the current knapsack capacity `w`), then the value remains the same as `dp[i - 1][w]`.
+
+- **Line 10**: `return dp[n][capacity]`
+  - After filling the DP table, the function returns the value stored at `dp[n][capacity]`, which is the maximum value achievable with `n` items and the given knapsack capacity.
+
+### **2. `get_input()`**
+
+```python
+def get_input():
+    value = list(map(int, input("Enter the values (comma-separated): ").split(',')))
+    weight = list(map(int, input("Enter the weights (comma-separated): ").split(',')))
+    capacity = int(input("Enter the capacity of the knapsack: "))
+
+    return value, weight, capacity
+```
+
+- **Line 1**: `def get_input():`
+  - Defines the function `get_input()` to collect user input for the knapsack problem.
+
+- **Line 2**: `value = list(map(int, input("Enter the values (comma-separated): ").split(',')))`
+  - Prompts the user to enter the values of the items as a comma-separated string.
+  - The input string is split into a list of strings using `.split(',')`.
+  - `map(int, ...)` converts each of the string elements into integers, and `list()` converts the map object into a list.
+  
+- **Line 3**: `weight = list(map(int, input("Enter the weights (comma-separated): ").split(',')))`
+  - Similar to the `value` list, this prompts the user for the weights of the items and converts them into a list of integers.
+  
+- **Line 4**: `capacity = int(input("Enter the capacity of the knapsack: "))`
+  - Prompts the user for the knapsack capacity and converts the input into an integer.
+  
+- **Line 5**: `return value, weight, capacity`
+  - Returns the `value` list, `weight` list, and `capacity` value.
+
+### **3. Main Program Execution**
+
+```python
+if __name__ == "__main__":
+    value, weight, capacity = get_input()
+    result = knapsack_dp(value, weight, capacity)
+    print(f"Maximum value in knapsack: {result}")
+```
+
+- **Line 1**: `if __name__ == "__main__":`
+  - This block ensures that the following code runs only if the script is executed directly (not imported as a module).
+  
+- **Line 2**: `value, weight, capacity = get_input()`
+  - Calls the `get_input()` function to get the values, weights, and capacity from the user.
+  
+- **Line 3**: `result = knapsack_dp(value, weight, capacity)`
+  - Calls the `knapsack_dp()` function to calculate the maximum value that can be placed in the knapsack, based on the input values, weights, and capacity.
+  
+- **Line 4**: `print(f"Maximum value in knapsack: {result}")`
+  - Prints the result, which is the maximum value that can be obtained by filling the knapsack with the given items.
+
+### **Example Execution:**
+
+If the user inputs:
+- Values: `60, 100, 120`
+- Weights: `10, 20, 30`
+- Knapsack Capacity: `50`
+
+The output will be:
+
+```
+Enter the values (comma-separated): 60,100,120
+Enter the weights (comma-separated): 10,20,30
+Enter the capacity of the knapsack: 50
+Maximum value in knapsack: 220
+```
+
+### **Explanation of Example:**
+
+- The DP table is constructed for each item and weight capacity.
+- The optimal value is found at `dp[3][50]` (for the 3 items and a capacity of 50), which is `220`.
+  
+#### Process:
+1. Item 1: (Value = 60, Weight = 10)
+   - Fits in the knapsack, so it is added completely.
+2. Item 2: (Value = 100, Weight = 20)
+   - Fits in the knapsack, so it is added completely.
+3. Item 3: (Value = 120, Weight = 30)
+   - Can’t be added completely because the remaining capacity is 20, so we skip it or consider adding a fraction in more complex variants.
+

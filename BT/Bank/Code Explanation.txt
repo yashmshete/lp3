@@ -1,0 +1,102 @@
+Let's go through the code line-by-line and explain each part in detail.
+
+### **1. SPDX License Identifier**
+```solidity
+// SPDX-License-Identifier: Unlicensed
+```
+- This is a comment used to specify the licensing information of the contract. `SPDX` (Software Package Data Exchange) is a standard for declaring the license under which the code is released. In this case, it is marked as "Unlicensed", which means the contract has no specified license.
+
+### **2. Solidity Version Declaration**
+```solidity
+pragma solidity ^0.8.0;
+```
+- This specifies the version of Solidity that the contract is compatible with. The `^` symbol means the contract will work with Solidity version `0.8.0` or any version higher, but lower than `0.9.0`. It ensures compatibility with future updates while avoiding breaking changes.
+
+### **3. Contract Declaration**
+```solidity
+contract Bank {
+```
+- This starts the definition of the `Bank` contract. A contract in Solidity is similar to a class in object-oriented programming. The contract defines the state variables and functions related to the bank's operations.
+
+### **4. State Variable Declaration**
+```solidity
+mapping(address => uint256) private balances;
+```
+- A `mapping` in Solidity is similar to a hash table or dictionary in other programming languages.
+- The key is an `address` (the Ethereum address of the account), and the value is a `uint256` (unsigned integer, representing the balance of the account).
+- `private` means this mapping can only be accessed within the contract and not from outside.
+
+### **5. Function: Create Account**
+```solidity
+function createAccount() public {
+    balances[msg.sender] = 0;
+}
+```
+- This function creates a new account for the caller (`msg.sender`).
+- `public` means this function can be called by any address.
+- `msg.sender` is a special variable that refers to the address of the account calling the function.
+- `balances[msg.sender] = 0;` sets the balance of the caller’s address to zero, indicating that the account has been created but does not hold any funds initially.
+
+### **6. Function: Get Balance**
+```solidity
+function getBalance() public view returns (uint256) {
+    return balances[msg.sender];
+}
+```
+- This function allows a user to check the balance of their own account.
+- `public` means it can be called by any address.
+- `view` indicates that this function does not modify the blockchain state and only reads the data.
+- `returns (uint256)` specifies that the function returns a `uint256` value, which is the balance of the caller.
+- `balances[msg.sender]` retrieves the balance of the address calling the function.
+
+### **7. Function: Deposit**
+```solidity
+function deposit(uint256 amount) public payable {
+    balances[msg.sender] += amount;
+}
+```
+- This function allows users to deposit funds into their account.
+- `public` means it can be called by any address.
+- `uint256 amount` specifies that the function takes an input of type `uint256` which is the amount to deposit.
+- `payable` is a keyword that allows this function to accept Ether (the native cryptocurrency of Ethereum). However, in this case, it is not used for receiving Ether directly because the `amount` is a separate input.
+- `balances[msg.sender] += amount;` adds the specified `amount` to the caller's balance.
+
+### **8. Function: Withdraw**
+```solidity
+function withdraw(uint256 amount) public {
+    require(balances[msg.sender] >= amount, "Insufficient amount");
+    balances[msg.sender] -= amount;
+}
+```
+- This function allows users to withdraw a specified amount of Ether or tokens from their account.
+- `public` means it can be called by any address.
+- `require(balances[msg.sender] >= amount, "Insufficient amount");` ensures that the caller has enough balance to make the withdrawal. If the condition is not met, the transaction is reverted, and the message "Insufficient amount" is displayed.
+- `balances[msg.sender] -= amount;` subtracts the specified `amount` from the caller's balance after ensuring sufficient funds.
+
+### **9. Function: Transfer**
+```solidity
+function transfer(uint256 amount, address receiver) public {
+    require(balances[msg.sender] >= amount, "Insufficient amount");
+    balances[msg.sender] -= amount;
+    balances[receiver] += amount;
+}
+```
+- This function allows a user to transfer a specified amount to another user's account.
+- `public` means it can be called by any address.
+- `uint256 amount` specifies the amount to transfer.
+- `address receiver` specifies the recipient's address.
+- `require(balances[msg.sender] >= amount, "Insufficient amount");` checks if the caller has enough balance to make the transfer. If not, it reverts with the message "Insufficient amount".
+- `balances[msg.sender] -= amount;` subtracts the specified amount from the caller's balance.
+- `balances[receiver] += amount;` adds the specified amount to the receiver's balance.
+
+---
+
+### **Summary:**
+This contract defines a basic `Bank` system with the following features:
+1. **Create Account**: Allows users to create an account with an initial balance of zero.
+2. **Get Balance**: Lets users view their balance.
+3. **Deposit**: Allows users to deposit a specified amount to their account.
+4. **Withdraw**: Lets users withdraw funds from their account, provided they have sufficient balance.
+5. **Transfer**: Allows users to transfer funds to other addresses, provided they have sufficient funds.
+
+Each function is designed to interact with a user's balance in a simple and secure way, with checks in place to prevent actions that would leave the user with insufficient funds.

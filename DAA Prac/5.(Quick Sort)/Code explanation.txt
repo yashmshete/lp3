@@ -1,0 +1,115 @@
+The code you provided implements two different sorting algorithms using the **QuickSort** approach: one using a deterministic pivot and the other using a randomized pivot. Here’s a detailed breakdown of how it works:
+
+### 1. **Deterministic QuickSort (`deter`)**
+
+```python
+def deter(arr):
+    if len(arr) <= 1:
+        return arr
+    pivot = arr[0]
+    left = [x for x in arr[1:] if x < pivot]
+    right = [x for x in arr[1:] if x >= pivot]
+    return deter(left) + [pivot] + deter(right)
+```
+
+- **Purpose**: Implements the deterministic version of QuickSort. The pivot is always chosen as the **first element** of the array.
+  
+- **How it works**:
+  - **Base Case**: If the array has 0 or 1 element, it is already sorted, so the function returns the array as-is.
+  - **Recursive Case**:
+    - The pivot is set as the first element of the array (`pivot = arr[0]`).
+    - The array is divided into two sub-arrays:
+      - `left`: Contains elements smaller than the pivot.
+      - `right`: Contains elements greater than or equal to the pivot.
+    - The function recursively sorts the `left` and `right` sub-arrays.
+    - Finally, it combines the sorted `left`, the pivot, and the sorted `right` to return the sorted array.
+  
+- **Example**:
+  - For an input array `[4, 2, 6, 1, 3]`, the pivot will always be the first element (`4`), and the array is partitioned based on this pivot. The left sub-array will contain elements less than `4`, and the right sub-array will contain elements greater than or equal to `4`.
+
+### 2. **Randomized QuickSort (`ran`)**
+
+```python
+def ran(arr):
+    if len(arr) <= 1:
+        return arr
+    pivot_index = random.randint(0, len(arr) - 1)
+    arr[0], arr[pivot_index] = arr[pivot_index], arr[0]
+    left = [x for x in arr[1:] if x < arr[0]]
+    right = [x for x in arr[1:] if x >= arr[0]]
+    return ran(left) + [arr[0]] + ran(right)
+```
+
+- **Purpose**: Implements the randomized version of QuickSort. A random pivot is selected each time from the array.
+  
+- **How it works**:
+  - **Base Case**: If the array has 0 or 1 element, it is already sorted.
+  - **Recursive Case**:
+    - A random index (`pivot_index`) is selected, and the element at this index is swapped with the first element of the array.
+    - The array is divided into two sub-arrays:
+      - `left`: Elements smaller than the pivot.
+      - `right`: Elements greater than or equal to the pivot.
+    - The function recursively sorts the `left` and `right` sub-arrays.
+    - Finally, it combines the sorted `left`, the pivot, and the sorted `right` to return the sorted array.
+  
+- **Example**:
+  - For the same input array `[4, 2, 6, 1, 3]`, the pivot is randomly selected. The pivot could be any element from the array, leading to different partitioning and recursive calls.
+
+### 3. **Main Program Logic**
+
+```python
+if __name__ == "__main__":
+    arr = list(map(int, input("Enter numbers separated by spaces: ").split()))
+
+    st = time.time()
+    d = deter(arr.copy())
+    et = time.time()
+    print("Deterministic sort result:", d)
+    print(f"Deterministic sort time: {et - st:.6f} seconds")
+
+    st = time.time()
+    r = ran(arr.copy())
+    et = time.time()
+    print("Randomized sort result:", r)
+    print(f"Randomized sort time: {et - st:.6f} seconds")
+```
+
+- **How it works**:
+  1. **Input**: The user is prompted to enter a list of numbers separated by spaces. The input is then converted into a list of integers (`arr`).
+  2. **Deterministic Sort**: 
+     - The deterministic `deter` function is called with a copy of the input list.
+     - The time before (`st`) and after (`et`) the sorting is measured using `time.time()`, and the time taken for sorting is printed.
+     - The sorted array is printed as the deterministic result.
+  3. **Randomized Sort**:
+     - The randomized `ran` function is called with a copy of the input list.
+     - Similarly, the time taken to sort using the randomized method is measured and printed.
+     - The sorted array is printed as the randomized result.
+
+### 4. **Example Execution**
+
+**Input:**
+```
+Enter numbers separated by spaces: 4 2 6 1 3
+```
+
+**Output:**
+```
+Deterministic sort result: [1, 2, 3, 4, 6]
+Deterministic sort time: 0.0001 seconds
+Randomized sort result: [1, 2, 3, 4, 6]
+Randomized sort time: 0.00005 seconds
+```
+
+### 5. **Time Complexity**
+
+- **Deterministic QuickSort**:
+  - In the worst case, the time complexity is **O(n²)**, which happens when the pivot divides the array into very uneven parts (e.g., when the array is already sorted).
+  - In the best case (balanced pivot selection), the time complexity is **O(n log n)**.
+  
+- **Randomized QuickSort**:
+  - Randomized QuickSort generally performs better, with an **average case time complexity of O(n log n)**.
+  - The worst-case complexity is still **O(n²)**, but it occurs with very low probability because of the random pivot selection.
+
+### 6. **Conclusion**
+
+This code implements two versions of QuickSort and compares their performance. While both versions sort the array, the deterministic version always uses the first element as the pivot, and the randomized version selects a random pivot, which typically leads to better performance in practice due to reduced likelihood of worst-case behavior.

@@ -1,0 +1,127 @@
+The provided code solves the **N-Queens Problem** using **backtracking**. It places `n` queens on an `n x n` chessboard such that no two queens threaten each other, with a custom first queen placed at a specified position. Let’s break down the code in detail:
+
+### **1. `is_safe(board, row, col, n)`**
+
+```python
+def is_safe(board, row, col, n): 
+    for i in range(row): 
+        if board[i][col] == 1 or (col - (row - i) >= 0 and board[i][col - (row - i)] == 1) or (col + (row - i) < n and board[i][col + (row - i)] == 1): 
+            return False 
+    return True
+```
+
+- **Purpose**: Checks if placing a queen at position `(row, col)` is safe, i.e., it doesn’t result in a queen being in the same column or diagonal as another queen.
+  
+- **Parameters**:
+  - `board`: The chessboard (a 2D list) that keeps track of the queens' positions (`1` means a queen is placed, `0` means no queen).
+  - `row`: The current row where we are trying to place a queen.
+  - `col`: The column where we are trying to place a queen.
+  - `n`: The size of the board (i.e., the number of queens).
+
+- **Logic**:
+  - The loop iterates over all the rows above the current `row` (from `0` to `row-1`).
+  - **Column check**: `board[i][col] == 1` checks if there is a queen in the same column.
+  - **Left diagonal check**: `(col - (row - i) >= 0 and board[i][col - (row - i)] == 1)` checks if there is a queen in the left diagonal.
+  - **Right diagonal check**: `(col + (row - i) < n and board[i][col + (row - i)] == 1)` checks if there is a queen in the right diagonal.
+  - If any of the conditions are true, it means placing the queen is not safe, so it returns `False`.
+  - Otherwise, it returns `True`.
+
+### **2. `solve_nqueens(board, row, n)`**
+
+```python
+def solve_nqueens(board, row, n): 
+    if row == n: 
+        return True 
+    for col in range(n): 
+        if is_safe(board, row, col, n): 
+            board[row][col] = 1 
+            if solve_nqueens(board, row + 1, n): 
+                return True 
+            board[row][col] = 0 
+    return False 
+```
+
+- **Purpose**: Tries to place queens row by row using backtracking.
+  
+- **Parameters**:
+  - `board`: The chessboard.
+  - `row`: The current row where we are trying to place a queen.
+  - `n`: The size of the board (i.e., the number of queens).
+
+- **Logic**:
+  - **Base case**: If `row == n`, it means all queens have been successfully placed on the board, so it returns `True`.
+  - **Column iteration**: The function iterates over each column of the current row (`0` to `n-1`).
+  - For each column, it checks if placing a queen at `(row, col)` is safe using `is_safe(board, row, col, n)`.
+    - If it is safe, it places a queen at `(row, col)` by setting `board[row][col] = 1`.
+    - Then it recursively calls `solve_nqueens(board, row + 1, n)` to place the queen in the next row.
+    - If the recursive call returns `True`, it means the solution was successful, so it returns `True` to propagate success.
+    - If placing a queen at `(row, col)` doesn’t lead to a solution, it backtracks by removing the queen (`board[row][col] = 0`) and tries the next column.
+  - If no solution is found after trying all columns for the current row, it returns `False`.
+
+### **3. `n_queens_first_placed(n, first_row, first_col)`**
+
+```python
+def n_queens_first_placed(n, first_row, first_col): 
+    board = [[0 for _ in range(n)] for _ in range(n)] 
+    board[first_row][first_col] = 1 
+    if not solve_nqueens(board, first_row + 1, n): 
+        print("No solution found.") 
+    else: 
+        for row in board: 
+            print(row)
+```
+
+- **Purpose**: Solves the N-Queens problem with the first queen placed at the specified `(first_row, first_col)` and prints the board.
+  
+- **Parameters**:
+  - `n`: The size of the board and the number of queens.
+  - `first_row`: The row where the first queen will be placed.
+  - `first_col`: The column where the first queen will be placed.
+
+- **Logic**:
+  - **Step 1**: Initializes an empty `n x n` board with all values set to `0` (no queens).
+  - **Step 2**: Places a queen at `(first_row, first_col)` by setting `board[first_row][first_col] = 1`.
+  - **Step 3**: Calls `solve_nqueens(board, first_row + 1, n)` to place queens in the subsequent rows starting from `first_row + 1`.
+    - If `solve_nqueens` returns `False`, it means no solution exists, so it prints `"No solution found."`.
+    - If `solve_nqueens` returns `True`, it means a solution was found, so it prints the board with `1`s representing queens and `0`s representing empty spots.
+
+### **4. Main Program Execution**
+
+```python
+n = int(input("Enter the value of n: ")) 
+first_row = int(input("Enter the first queen's row position: ")) 
+first_col = int(input("Enter the first queen's column position: ")) 
+n_queens_first_placed(n, first_row, first_col)
+```
+
+- **User Input**: The program first asks the user for the size of the board (`n`) and the position of the first queen (`first_row` and `first_col`).
+  
+- **Calling the function**: It then calls `n_queens_first_placed(n, first_row, first_col)` to solve the N-Queens problem with the first queen pre-placed at the given position.
+
+### **Example Execution:**
+
+**Input:**
+```
+Enter the value of n: 4
+Enter the first queen's row position: 0
+Enter the first queen's column position: 1
+```
+
+**Output:**
+```
+[0, 1, 0, 0]
+[1, 0, 0, 0]
+[0, 0, 1, 0]
+[0, 0, 0, 1]
+```
+
+### **Explanation:**
+
+- The program places the first queen at `(0, 1)` (top row, second column).
+- It then uses backtracking to try to place the remaining queens in the next rows.
+- The solution is found, and the board is printed with queens placed in such a way that no two queens threaten each other.
+
+### **Key Concepts:**
+
+- **Backtracking**: This algorithm explores all possible placements of queens in rows and backtracks when it encounters an invalid configuration (where queens threaten each other).
+- **Safety Check**: The `is_safe` function ensures that no two queens are in the same column or diagonal.

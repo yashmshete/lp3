@@ -1,0 +1,84 @@
+The given Python code contains two functions for calculating the Fibonacci sequence: one using an iterative approach and the other using a recursive approach. Let's break down the code line by line:
+
+### **1. fibonacci_iterative(n)**
+```python
+def fibonacci_iterative(n):
+    if n <= 0:
+        return 0
+    elif n == 1:
+        return 1
+    a, b = 0, 1
+    for _ in range(2, n + 1):
+        a, b = b, a + b
+    return b
+```
+
+- **Line 1**: Defines the function `fibonacci_iterative(n)` that calculates the `n`-th Fibonacci number iteratively.
+- **Line 2**: `if n <= 0:` checks if `n` is 0 or negative. If so, it returns `0` because the Fibonacci sequence for `n = 0` is defined as 0.
+- **Line 3**: `elif n == 1:` checks if `n` is equal to 1. The Fibonacci number for `n = 1` is 1.
+- **Line 4**: Initializes two variables `a` and `b` to 0 and 1, which represent the first two Fibonacci numbers (F(0) = 0 and F(1) = 1).
+- **Line 5**: `for _ in range(2, n + 1):` starts a loop that iterates from 2 to `n`. The loop will calculate the Fibonacci numbers from F(2) to F(n) using the previous two numbers.
+    - **Line 6**: Inside the loop, the values of `a` and `b` are updated such that `a` gets the previous value of `b`, and `b` gets the sum of `a` and `b`. This ensures that `b` always holds the current Fibonacci number, and `a` holds the previous one.
+- **Line 7**: After the loop completes, `b` holds the `n`-th Fibonacci number, which is then returned.
+
+### **2. fibonacci_recursive(n)**
+```python
+def fibonacci_recursive(n):
+    if n <= 0:
+        return 0
+    elif n == 1:
+        return 1
+    else:
+        return fibonacci_recursive(n - 1) + fibonacci_recursive(n - 2)
+```
+
+- **Line 8**: Defines the function `fibonacci_recursive(n)` that calculates the `n`-th Fibonacci number using recursion.
+- **Line 9**: `if n <= 0:` checks if `n` is 0 or negative. If so, it returns `0`, as per the Fibonacci sequence.
+- **Line 10**: `elif n == 1:` checks if `n` is equal to 1. If so, it returns `1`.
+- **Line 11**: The `else` clause handles the case where `n` is greater than 1. The function calls itself recursively with `n - 1` and `n - 2`, summing the results of these recursive calls to return the `n`-th Fibonacci number.
+
+### **3. Main Program Execution**
+```python
+if __name__ == "__main__":
+    n = int(input("Enter a positive integer to compute Fibonacci: "))
+    print(f"Fibonacci (Iterative) of {n}: {fibonacci_iterative(n)}")
+    print(f"Fibonacci (Recursive) of {n}: {fibonacci_recursive(n)}")
+```
+
+- **Line 12**: `if __name__ == "__main__":` ensures that the following block of code only runs when the script is executed directly, not when it's imported as a module.
+- **Line 13**: `n = int(input("Enter a positive integer to compute Fibonacci: "))` prompts the user to enter a positive integer. The input is then converted to an integer and stored in the variable `n`.
+- **Line 14**: `print(f"Fibonacci (Iterative) of {n}: {fibonacci_iterative(n)}")` prints the result of the iterative Fibonacci function for the entered value of `n`.
+- **Line 15**: `print(f"Fibonacci (Recursive) of {n}: {fibonacci_recursive(n)}")` prints the result of the recursive Fibonacci function for the entered value of `n`.
+
+### **Example Execution:**
+
+- When you run the script and input `5`:
+    - The **iterative approach** will calculate Fibonacci(5) as follows:
+      - Start with `a = 0`, `b = 1`, then iterate:
+        - Iteration 1: `a = 1`, `b = 1` (F(2) = 1)
+        - Iteration 2: `a = 1`, `b = 2` (F(3) = 2)
+        - Iteration 3: `a = 2`, `b = 3` (F(4) = 3)
+        - Iteration 4: `a = 3`, `b = 5` (F(5) = 5)
+      - Return `5`.
+    - The **recursive approach** will call the function recursively:
+      - Fibonacci(5) = Fibonacci(4) + Fibonacci(3)
+      - Fibonacci(4) = Fibonacci(3) + Fibonacci(2)
+      - Continue until the base cases Fibonacci(1) = 1 and Fibonacci(0) = 0 are reached, then calculate the sum.
+      - Return `5`.
+
+---
+
+### **Differences Between Iterative and Recursive Approaches:**
+
+1. **Time Complexity**:
+   - The **iterative approach** runs in `O(n)` time, as it calculates each Fibonacci number once.
+   - The **recursive approach** has exponential time complexity `O(2^n)` due to repeated recalculations of the same Fibonacci numbers.
+
+2. **Space Complexity**:
+   - The **iterative approach** has `O(1)` space complexity, as it uses only a fixed amount of memory for variables `a` and `b`.
+   - The **recursive approach** has `O(n)` space complexity, as each recursive call adds a new stack frame.
+
+3. **Performance**:
+   - The **iterative approach** is much more efficient for large `n`, as it avoids redundant calculations.
+   - The **recursive approach** is elegant but inefficient for large `n` unless optimized with techniques like **memoization**.
+
