@@ -1,0 +1,44 @@
+**Implementing the Gradient Descent Algorithm** involves optimizing a function by iteratively adjusting parameters to minimize the cost (or loss) function. Here's a concise explanation and Python code implementation for **Gradient Descent** in a simple linear regression context:
+
+### 1. **Problem Definition**:
+   - **Goal**: Minimize a loss function (e.g., Mean Squared Error) to find the optimal parameters (weights) for a model.
+   - **Gradient Descent**: Iteratively adjusts the model parameters (weights) in the direction of the negative gradient of the loss function, scaling by a learning rate.
+
+### 2. **Formula**:
+   The general update rule for gradient descent is:
+   \[
+   \theta = \theta - \alpha \cdot \nabla_{\theta} J(\theta)
+   \]
+   Where:
+   - \(\theta\) are the model parameters (weights).
+   - \(\alpha\) is the learning rate.
+   - \(\nabla_{\theta} J(\theta)\) is the gradient of the cost function \(J(\theta)\).
+
+### 3. **Cost Function** (for linear regression):
+   The cost function typically used for linear regression is **Mean Squared Error (MSE)**:
+   \[
+   J(\theta) = \frac{1}{m} \sum_{i=1}^{m} (h_\theta(x^{(i)}) - y^{(i)})^2
+   \]
+   Where \(h_\theta(x) = \theta_0 + \theta_1 x\) is the hypothesis (model), \(x^{(i)}\) is the input feature, and \(y^{(i)}\) is the true output.
+
+### 4. **Steps**:
+   - **Initialize** weights randomly.
+   - **Compute the gradient** of the cost function.
+   - **Update weights** iteratively using the learning rate.
+   - **Stop when convergence** is achieved (i.e., when the change in the cost function is very small).
+
+
+### 6. **Explanation of Code**:
+   - **Data Generation**: We create synthetic data with a linear relationship \(y = 4 + 3x + \text{noise}\).
+   - **Gradient Descent Function**: 
+     - Initializes weights (`theta`).
+     - Iteratively updates the weights by calculating the gradient and adjusting the weights according to the learning rate.
+     - Tracks the **cost function** (MSE) over iterations to visualize convergence.
+   - **Plotting**: The cost history is plotted to show how the cost function decreases as the model learns.
+   - **Optimal Weights**: After running gradient descent, the final `theta` values are printed, representing the learned weights.
+
+### 7. **Output**:
+   - The graph will show the **convergence** of the cost function over time.
+   - The optimal weights (`theta_optimal`) will approximate the true parameters used to generate the synthetic data.
+
+This code demonstrates how to implement **Gradient Descent** to minimize the cost function and optimize model parameters for linear regression.

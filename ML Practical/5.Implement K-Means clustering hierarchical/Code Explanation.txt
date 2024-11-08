@@ -1,0 +1,185 @@
+This code demonstrates the process of **customer segmentation** using **K-Means clustering** and **PCA (Principal Component Analysis)** for dimensionality reduction. Let's break it down step-by-step:
+
+---
+
+### **1. Importing Libraries:**
+
+```python
+import pandas as pd
+import numpy as np
+import seaborn as sns
+import matplotlib.pyplot as plt
+from sklearn.cluster import KMeans, k_means  # For clustering
+from sklearn.decomposition import PCA  # Linear Dimensionality reduction
+```
+- **`pandas`**: For data manipulation and handling.
+- **`numpy`**: For numerical operations and working with arrays.
+- **`seaborn` and `matplotlib.pyplot`**: For visualizations.
+- **`KMeans` and `k_means`**: For performing K-Means clustering.
+- **`PCA`**: For reducing the dimensionality of data (useful for visualizations).
+
+---
+
+### **2. Loading and Exploring the Data:**
+
+```python
+df = pd.read_csv("sales_data_sample.csv", encoding='ISO-8859-1')
+df.head()
+df.shape
+df.describe()
+df.info()
+df.isnull().sum()
+df.dtypes
+```
+- **`df`** is the DataFrame created from the CSV file `sales_data_sample.csv`.
+- **`df.head()`**: Displays the first 5 rows of the data.
+- **`df.shape`**: Returns the dimensions of the dataset (rows and columns).
+- **`df.describe()`**: Provides summary statistics (mean, standard deviation, etc.) for numerical columns.
+- **`df.info()`**: Gives info on data types and non-null counts.
+- **`df.isnull().sum()`**: Checks for missing values in the dataset.
+- **`df.dtypes`**: Shows the data types of all columns.
+
+---
+
+### **3. Data Preprocessing:**
+
+```python
+df_drop = ['ADDRESSLINE1', 'ADDRESSLINE2', 'STATUS', 'POSTALCODE', 'CITY', 'TERRITORY', 'PHONE', 
+           'STATE', 'CONTACTFIRSTNAME', 'CONTACTLASTNAME', 'CUSTOMERNAME', 'ORDERNUMBER']
+df = df.drop(df_drop, axis=1)
+```
+- Unnecessary columns like customer contact details, addresses, and order numbers are dropped from the dataset to focus on relevant features.
+
+---
+
+### **4. Handling Categorical Variables:**
+
+```python
+productline = pd.get_dummies(df['PRODUCTLINE'])  # Converting categorical column into dummy variables.
+Dealsize = pd.get_dummies(df['DEALSIZE'])
+df = pd.concat([df, productline, Dealsize], axis=1)
+```
+- **`pd.get_dummies()`** is used to convert the categorical variables **`PRODUCTLINE`** and **`DEALSIZE`** into dummy/indicator variables (one-hot encoding). This creates binary columns (0 or 1) for each category.
+
+---
+
+### **5. Dropping Additional Columns:**
+
+```python
+df_drop = ['COUNTRY', 'PRODUCTLINE', 'DEALSIZE']
+df = df.drop(df_drop, axis=1)
+df['PRODUCTCODE'] = pd.Categorical(df['PRODUCTCODE']).codes  # Converting PRODUCTCODE into categorical codes.
+df.drop('ORDERDATE', axis=1, inplace=True)
+```
+- **`COUNTRY`** is dropped due to the large number of unique values, making it challenging to handle.
+- **`PRODUCTCODE`** is converted into numerical codes using **`pd.Categorical()`** to prepare for modeling.
+- **`ORDERDATE`** is dropped as it's redundant with the month already included.
+
+---
+
+### **6. Finding Optimal Number of Clusters (Elbow Method):**
+
+```python
+distortions = []
+K = range(1, 10)
+for k in K:
+    kmeanModel = KMeans(n_clusters=k)
+    kmeanModel.fit(df)
+    distortions.append(kmeanModel.inertia_)
+```
+- The **Elbow Method** is used to determine the optimal number of clusters for K-Means. 
+- **`kmeanModel.inertia_`** measures the sum of squared distances of samples to their nearest cluster center. The idea is to plot the distortion against the number of clusters and look for an "elbow" point where the distortion stops decreasing significantly.
+
+```python
+plt.figure(figsize=(16,8))
+plt.plot(K, distortions, 'bx-')
+plt.xlabel('k')
+plt.ylabel('Distortion')
+plt.title('The Elbow Method showing the optimal k')
+plt.show()
+```
+- This plot visualizes the distortion for different values of \( k \) (number of clusters). The optimal value of \( k \) is typically where the distortion starts to level off (forming the "elbow").
+
+---
+
+### **7. Applying K-Means Clustering:**
+
+```python
+X_train = df.values  # Convert the DataFrame to a NumPy array for clustering.
+model = KMeans(n_clusters=3, random_state=2)  # Use 3 clusters as determined.
+model = model.fit(X_train)  # Fit the KMeans model to the data.
+predictions = model.predict(X_train)  # Predict cluster assignments for each data point.
+```
+- **`KMeans(n_clusters=3)`**: Specifies the number of clusters (3 in this case).
+- **`model.fit(X_train)`**: Trains the K-Means model on the data.
+- **`predictions`**: The predicted cluster labels (0, 1, or 2) for each data point.
+
+---
+
+### **8. Visualizing the Clusters:**
+
+```python
+unique, counts = np.unique(predictions, return_counts=True)
+counts = counts.reshape(1, 3)
+counts_df = pd.DataFrame(counts, columns=['Cluster1', 'Cluster2', 'Cluster3'])
+counts_df.head()
+```
+- This calculates the number of points in each cluster and stores it in a DataFrame.
+
+```python
+pca = PCA(n_components=2)
+reduced_X = pd.DataFrame(pca.fit_transform(X_train), columns=['PCA1', 'PCA2'])
+reduced_X.head()
+```
+- **PCA** is used to reduce the dimensionality of the data to 2 dimensions (so it can be plotted). The `fit_transform()` method performs both the fitting and transformation.
+
+```python
+plt.figure(figsize=(14,10))
+plt.scatter(reduced_X['PCA1'], reduced_X['PCA2'])
+```
+- A scatter plot of the reduced data in 2D space.
+
+```python
+model.cluster_centers_
+reduced_centers = pca.transform(model.cluster_centers_)
+reduced_centers
+```
+- The cluster centroids are transformed into the reduced 2D space using **PCA** so they can be plotted on the graph.
+
+```python
+plt.figure(figsize=(14,10))
+plt.scatter(reduced_X['PCA1'], reduced_X['PCA2'])
+plt.scatter(reduced_centers[:, 0], reduced_centers[:, 1], color='black', marker='x', s=300)
+```
+- The scatter plot now includes the **centroids** of the clusters, marked with large black "x" markers.
+
+```python
+reduced_X['Clusters'] = predictions  # Add the cluster labels to the reduced DataFrame.
+```
+- The cluster assignments are added to the reduced dataset.
+
+---
+
+### **9. Visualizing Clusters with Different Colors:**
+
+```python
+plt.figure(figsize=(14,10))
+
+plt.scatter(reduced_X[reduced_X['Clusters'] == 0].loc[:, 'PCA1'], reduced_X[reduced_X['Clusters'] == 0].loc[:, 'PCA2'], color='slateblue')
+plt.scatter(reduced_X[reduced_X['Clusters'] == 1].loc[:, 'PCA1'], reduced_X[reduced_X['Clusters'] == 1].loc[:, 'PCA2'], color='springgreen')
+plt.scatter(reduced_X[reduced_X['Clusters'] == 2].loc[:, 'PCA1'], reduced_X[reduced_X['Clusters'] == 2].loc[:, 'PCA2'], color='indigo')
+
+plt.scatter(reduced_centers[:, 0], reduced_centers[:, 1], color='black', marker='x', s=300)
+
+plt.xlabel('PCA1')
+plt.ylabel('PCA2')
+plt.title('Clusters Visualization')
+plt.show()
+```
+- This final plot visualizes the three clusters with different colors and the **centroids** in black.
+- The **PCA1** and **PCA2** axes represent the reduced dimensions after applying PCA.
+
+---
+
+### **Summary:**
+This code performs clustering on sales data using K-Means, determines the optimal number of clusters using the Elbow Method, and visualizes the resulting clusters in 2D space after reducing the dimensionality with PCA.
